@@ -1,0 +1,21 @@
+id,title,description,severity,component,status,created_at,customer_impact
+1,App crashes on login,App crashes when user enters credentials and taps login,High,Auth,Open,2026-03-01,Users unable to access account
+2,Slow checkout process,Checkout takes more than 15 seconds to complete,Medium,Payments,Open,2026-03-02,Drop in conversion rate
+3,Incorrect order total,Order total not including tax correctly,High,Cart,Open,2026-03-02,Financial discrepancies
+4,UI glitch on profile page,Profile picture overlaps with text on iPhone 14,Low,UI,Open,2026-03-03,Minor UX issue
+5,Search returns irrelevant results,Search results not matching query terms,Medium,Search,Open,2026-03-03,User frustration
+6,App crash on login,Crash occurs intermittently when logging in with Google,High,Auth,Open,2026-03-04,Login failures
+7,Payment declined incorrectly,Valid credit cards are being rejected,High,Payments,Open,2026-03-04,Lost revenue
+8,Notifications not received,Push notifications not delivered on Android devices,Medium,Notifications,Open,2026-03-05,Reduced engagement
+9,Cart items disappear,Items removed from cart after refresh,High,Cart,Open,2026-03-05,Lost purchases
+10,Slow app startup,App takes 10+ seconds to load initial screen,Medium,Performance,Open,2026-03-06,User churn risk
+11,Search crashes app,App crashes when searching long queries,High,Search,Open,2026-03-06,Feature unusable
+12,Profile update not saved,Changes to profile not persisting after save,Medium,Profile,Open,2026-03-07,User frustration
+13,Duplicate notifications,Users receive same notification multiple times,Low,Notifications,Open,2026-03-07,Annoyance
+14,Checkout button unresponsive,Button does not respond on first tap,High,Payments,Open,2026-03-08,Checkout failure
+15,Image upload fails,Users unable to upload profile pictures,Medium,Profile,Open,2026-03-08,Incomplete profiles
+16,App freezes on home screen,App becomes unresponsive after opening,High,Performance,Open,2026-03-09,Users blocked
+17,Search results delayed,Search results take too long to appear,Medium,Search,Open,2026-03-09,Poor UX
+18,Cart total incorrect,Discounts not applied correctly,High,Cart,Open,2026-03-10,Revenue impact
+19,Login session expires too soon,Users logged out after short inactivity,Medium,Auth,Open,2026-03-10,User annoyance
+20,Notifications delayed,Push notifications delivered hours late,Low,Notifications,Open,2026-03-11,Reduced engagement
