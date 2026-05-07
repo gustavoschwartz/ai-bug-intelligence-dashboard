@@ -116,6 +116,7 @@ ai-bug-intelligence-dashboard/
 5. Run the app:
 
    streamlit run app.py
+   .venv/bin/streamlit run app.py
 
 ---
 
