@@ -57,15 +57,21 @@ Download analysis results for sharing with stakeholders.
 ## 🏗️ Architecture
 
 ```
-CSV (bug data)
+CSV file
    ↓
-Pandas (data processing)
+Pandas dataframe
    ↓
-Embeddings (semantic similarity)
+LLM classification
    ↓
-LLM (classification + summarization)
+Categories added to dataset
    ↓
-Streamlit (UI & visualization)
+Embeddings generation
+   ↓
+Similarity analysis
+   ↓
+Executive summary + recommendations
+   ↓
+Streamlit dashboard
 ```
 
 ---
