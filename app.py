@@ -10,6 +10,7 @@ from openai import OpenAI
 DEFAULT_CSV = "bugs.csv"
 
 
+@st.cache_data(show_spinner=False)
 def load_bug_data(uploaded_file):
     if uploaded_file is not None:
         return pd.read_csv(uploaded_file)
@@ -32,6 +33,7 @@ def bug_rows_for_prompt(df):
     return rows
 
 
+@st.cache_data(show_spinner=False)
 def analyze_bugs_with_llm(df):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
@@ -93,6 +95,7 @@ def bug_text_for_embeddings(df):
     return texts
 
 
+@st.cache_data(show_spinner=False)
 def generate_bug_embeddings(df):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")

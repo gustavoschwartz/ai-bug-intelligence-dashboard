@@ -18,6 +18,7 @@ This application uses OpenAI APIs for inference, combining LLM-based classificat
 
 I intentionally used a workflow-oriented architecture instead of agents because the problem domain was deterministic and sequential. A workflow provided better reliability, predictability, and debuggability.
 
+Added caching to reduce repeated API calls, latency, and cost during interactive analysis.
 ---
 
 ## 📸 Screenshots
