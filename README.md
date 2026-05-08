@@ -14,6 +14,10 @@ This project demonstrates how modern AI techniques can transform raw issue data 
 * Embeddings-based semantic similarity for duplicate detection
 * Interactive visualization and reporting
 
+This application uses OpenAI APIs for inference, combining LLM-based classification with embeddings-based similarity analysis
+
+I intentionally used a workflow-oriented architecture instead of agents because the problem domain was deterministic and sequential. A workflow provided better reliability, predictability, and debuggability.
+
 ---
 
 ## 📸 Screenshots
@@ -73,6 +77,16 @@ Executive summary + recommendations
    ↓
 Streamlit dashboard
 ```
+
+## System Flow
+
+1. User uploads CSV bug data
+2. Pandas processes the dataset
+3. LLM classifies bugs into categories
+4. Python aggregates counts and trends
+5. Embeddings compute semantic similarity
+6. LLM generates executive recommendations
+7. Streamlit displays insights and reports
 
 ---
 
