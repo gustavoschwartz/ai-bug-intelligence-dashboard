@@ -42,12 +42,19 @@ You are analyzing product bug reports.
 Classify each bug into one clear theme such as Login, Payments, UI,
 Performance, Search, Notifications, Cart, Profile, or another concise category.
 
-Return only valid JSON in this exact shape:
+Return only valid JSON in this exact shape.
+
+Important:
+- Include one bug_categories entry for EVERY bug report provided.
+- Use the exact id from each bug report.
+- Do not skip any bug.
+- Do not return only examples.
+- category must be a short label such as Login, Payments, Cart, Search, Notifications, Performance, Profile, UI, or Other.
+
 {{
   "bug_categories": [
     {{"id": 1, "category": "Login"}}
   ],
-  "top_problem_areas": ["Login", "Payments", "Performance"],
   "executive_summary": "Short plain-English summary for leadership.",
   "prioritized_recommendations": [
     "Fix checkout-blocking payment and cart defects first."
@@ -169,6 +176,11 @@ if st.button("Analyze Bugs", type="primary"):
 
     with st.spinner("Analyzing bugs with LLM..."):
         analysis = analyze_bugs_with_llm(bugs_df)
+        returned_ids = {str(item["id"]) for item in analysis.get("bug_categories", [])}
+        expected_ids = set(bugs_df["id"].astype(str))
+        missing_ids = expected_ids - returned_ids
+        if missing_ids:
+            st.warning(f"LLM did not return categories for bug IDs: {sorted(missing_ids)}")
         analyzed_df = add_categories_to_data(bugs_df, analysis)
         embeddings = generate_bug_embeddings(bugs_df)
         similar_bugs_df = find_similar_bugs(bugs_df, embeddings)
@@ -190,8 +202,8 @@ if st.button("Analyze Bugs", type="primary"):
     st.bar_chart(category_counts, x="AI_Category", y="Bug Count")
 
     st.subheader("Top 3 Problem Areas")
-    top_areas = analysis.get("top_problem_areas") or category_counts["AI_Category"].head(3)
-    for index, area in enumerate(top_areas[:3], start=1):
+    top_problem_areas = (analyzed_df["AI_Category"].value_counts().head(3).index.tolist())
+    for index, area in enumerate(top_problem_areas, start=1):
         st.write(f"{index}. {area}")
 
     st.subheader("Executive Summary")
