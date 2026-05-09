@@ -5,9 +5,10 @@ import os
 import pandas as pd
 import streamlit as st
 from openai import OpenAI
+from pathlib import Path
 
 
-DEFAULT_CSV = "bugs.csv"
+DEFAULT_CSV = Path(__file__).parent/"bugs.csv"
 
 
 @st.cache_data(show_spinner=False)
@@ -54,17 +55,17 @@ Important:
 - category must be a short label such as Login, Payments, Cart, Search, Notifications, Performance, Profile, UI, or Other.
 
 {{
-  "bug_categories": [
+"bug_categories": [
     {{"id": 1, "category": "Login"}}
-  ],
-  "executive_summary": "Short plain-English summary for leadership.",
-  "prioritized_recommendations": [
+],
+"executive_summary": "Short plain-English summary for leadership.",
+"prioritized_recommendations": [
     "Fix checkout-blocking payment and cart defects first."
-  ],
-  "suggested_next_actions": [
+],
+"suggested_next_actions": [
     "Assign owners for the highest-severity issues within 24 hours."
-  ],
-  "severity_customer_impact_reasoning": "Explain how severity and customer impact shaped the recommendations."
+],
+"severity_customer_impact_reasoning": "Explain how severity and customer impact shaped the recommendations."
 }}
 
 Base the recommendations and next actions on severity, customer impact, and
@@ -79,12 +80,10 @@ Bug reports:
         model=model,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
-        temperature=1,
-        #GVAR temperature=0.2,
+        temperature=0.2
     )
 
     return json.loads(response.choices[0].message.content)
-
 
 def bug_text_for_embeddings(df):
     texts = []
@@ -106,7 +105,6 @@ def generate_bug_embeddings(df):
     )
 
     return [item.embedding for item in response.data]
-
 
 def cosine_similarity(vector_a, vector_b):
     dot_product = sum(a * b for a, b in zip(vector_a, vector_b))
@@ -178,55 +176,63 @@ if st.button("Analyze Bugs", type="primary"):
         st.stop()
 
     with st.spinner("Analyzing bugs with LLM..."):
-        analysis = analyze_bugs_with_llm(bugs_df)
-        returned_ids = {str(item["id"]) for item in analysis.get("bug_categories", [])}
-        expected_ids = set(bugs_df["id"].astype(str))
-        missing_ids = expected_ids - returned_ids
-        if missing_ids:
-            st.warning(f"LLM did not return categories for bug IDs: {sorted(missing_ids)}")
-        analyzed_df = add_categories_to_data(bugs_df, analysis)
-        embeddings = generate_bug_embeddings(bugs_df)
-        similar_bugs_df = find_similar_bugs(bugs_df, embeddings)
+        try:
+            analysis = analyze_bugs_with_llm(bugs_df)
+            returned_ids = {str(item["id"]) for item in analysis.get("bug_categories", [])}
+            expected_ids = set(bugs_df["id"].astype(str))
+            if returned_ids != expected_ids:
+                missing = expected_ids - returned_ids
+                extra = returned_ids - expected_ids
+                if missing:
+                    st.warning(f"LLM skipped bug IDs: {sorted(missing)}")
+                if extra:
+                    st.warning(f"LLM invented unexpected IDs: {sorted(extra)}")
+            analyzed_df = add_categories_to_data(bugs_df, analysis)
+            embeddings = generate_bug_embeddings(bugs_df)
+            similar_bugs_df = find_similar_bugs(bugs_df, embeddings)
 
-    st.subheader("Analyzed Bug Reports")
-    st.dataframe(analyzed_df, width='stretch')
-    st.download_button(
-        label="Download Analyzed Bugs CSV",
-        data=analyzed_df.to_csv(index=False),
-        file_name="analyzed_bugs.csv",
-        mime="text/csv",
-    )
+            st.subheader("Analyzed Bug Reports")
+            st.dataframe(analyzed_df, width='stretch')
+            st.download_button(
+                label="Download Analyzed Bugs CSV",
+                data=analyzed_df.to_csv(index=False),
+                file_name="analyzed_bugs.csv",
+                mime="text/csv",
+            )
 
-    category_counts = analyzed_df["AI_Category"].value_counts().reset_index()
-    category_counts.columns = ["AI_Category", "Bug Count"]
+            category_counts = analyzed_df["AI_Category"].value_counts().reset_index()
+            category_counts.columns = ["AI_Category", "Bug Count"]
 
-    st.subheader("Count of Bugs per Category")
-    st.dataframe(category_counts, width='stretch')
-    st.bar_chart(category_counts, x="AI_Category", y="Bug Count")
+            st.subheader("Count of Bugs per Category")
+            st.dataframe(category_counts, width='stretch')
+            st.bar_chart(category_counts, x="AI_Category", y="Bug Count")
 
-    st.subheader("Top 3 Problem Areas")
-    top_problem_areas = (analyzed_df["AI_Category"].value_counts().head(3).index.tolist())
-    for index, area in enumerate(top_problem_areas, start=1):
-        st.write(f"{index}. {area}")
+            st.subheader("Top 3 Problem Areas")
+            top_problem_areas = (analyzed_df["AI_Category"].value_counts().head(3).index.tolist())
+            for index, area in enumerate(top_problem_areas, start=1):
+                st.write(f"{index}. {area}")
 
-    st.subheader("Executive Summary")
-    st.write(analysis.get("executive_summary", "No summary returned."))
+            st.subheader("Executive Summary")
+            st.write(analysis.get("executive_summary", "No summary returned."))
 
-    st.subheader("Prioritized Recommendations")
-    for recommendation in analysis.get("prioritized_recommendations", []):
-        st.write(f"- {recommendation}")
+            st.subheader("Prioritized Recommendations")
+            for recommendation in analysis.get("prioritized_recommendations", []):
+                st.write(f"- {recommendation}")
 
-    st.subheader("Suggested Next Actions")
-    for action in analysis.get("suggested_next_actions", []):
-        st.write(f"- {action}")
+            st.subheader("Suggested Next Actions")
+            for action in analysis.get("suggested_next_actions", []):
+                st.write(f"- {action}")
 
-    st.subheader("Reasoning")
-    st.write(
-        analysis.get(
-            "severity_customer_impact_reasoning",
-            "No severity and customer-impact reasoning returned.",
-        )
-    )
+            st.subheader("Reasoning")
+            st.write(
+                analysis.get(
+                    "severity_customer_impact_reasoning",
+                    "No severity and customer-impact reasoning returned.",
+                )
+            )
 
-    st.subheader("Potential Duplicate Bugs")
-    st.dataframe(similar_bugs_df, width='stretch')
+            st.subheader("Potential Duplicate Bugs")
+            st.dataframe(similar_bugs_df, width='stretch')
+        except Exception as e:
+            st.error(f"Analysis failed: {e}")
+            st.stop()

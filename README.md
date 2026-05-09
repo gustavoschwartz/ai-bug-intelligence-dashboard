@@ -23,8 +23,10 @@ Added caching to reduce repeated API calls, latency, and cost during interactive
 
 ## 📸 Screenshots
 
-*(Add 1–2 screenshots of your dashboard here)*
-
+![Dashboard Overview](screenshots/ai-dashboard-screenshot1.png)
+![Analysis Results - bugs per category](screenshots/ai-dashboard-screenshot2.png)
+![Analysis Results - summary](screenshots/ai-dashboard-screenshot3.png)
+![Analysis Results - duplicates](screenshots/ai-dashboard-screenshot4.png)
 ---
 
 ## 🧠 Key Features
@@ -97,7 +99,7 @@ Streamlit dashboard
 * Streamlit
 * OpenAI (LLM + embeddings)
 * Pandas
-* Scikit-learn (cosine similarity)
+* Custom cosine similarity implementation
 
 ---
 
@@ -136,7 +138,6 @@ ai-bug-intelligence-dashboard/
 
 5. Run the app:
 
-   streamlit run app.py
    .venv/bin/streamlit run app.py
 
 ---
@@ -159,7 +160,6 @@ ai-bug-intelligence-dashboard/
 
 ## 📌 Future Improvements
 
-* Add caching to reduce API calls and latency
 * Introduce evaluation metrics for classification quality
 * Support real-time data ingestion (e.g., Jira API)
 * Add confidence scoring for AI outputs
@@ -168,7 +168,7 @@ ai-bug-intelligence-dashboard/
 
 ## 💡 Why this matters
 
-This project illustrates how combining deterministic retrieval (embeddings) with generative AI (LLMs) enables more reliable and practical AI systems — a pattern widely used in production environments.
+Built to solve a problem I encountered as a TPM at Amazon: manually triaging hundreds of bug reports is slow and inconsistent. This automates the first pass. Combining deterministic retrieval (embeddings) with generative AI (LLMs) enables more reliable and practical AI systems — a pattern widely used in production environments.
 
 ---
 
